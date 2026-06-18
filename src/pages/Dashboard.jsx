@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CameraFeed from "../components/CameraFeed";
 import DeviceCard from "../components/DeviceCard";
 import { useNavigate } from "react-router-dom";
 import { getDevices } from "../services/deviceStore";
 import VoiceControl from "../components/VoiceControl";
 import { sendBrightness } from "../services/adafruitApi";
+import GestureControl from "../components/GestureControl";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 function Dashboard() {
   const navigate = useNavigate();
   const [brightness, setBrightness] = useState(50);
-  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [selectedDevice, setSelectedDevice] = useState(
+  localStorage.getItem("selectedDevice")
+);
+  const [deviceStatus, setDeviceStatus] = useState("Online");
   const [facingMode, setFacingMode] = useState("user");
+useEffect(() => {
+  if (selectedDevice) {
+    localStorage.setItem(
+      "selectedDevice",
+      selectedDevice
+    );
+  }
+}, [selectedDevice]);
+
 
 const handleVoiceCommand = (command) => {
   console.log(command);
@@ -45,7 +59,11 @@ const handleVoiceCommand = (command) => {
         color: "white",
         padding: "20px",
         
+        
+        
       }}
+
+      
     >
 <h1
   style={{
@@ -57,7 +75,15 @@ const handleVoiceCommand = (command) => {
 >
   Smart LED Dashboard
 </h1>
-
+<p
+  style={{
+    textAlign: "center",
+    color: "#94a3b8",
+    marginBottom: "25px",
+  }}
+>
+  Voice • Gesture • Camera • Adafruit IO Control
+</p>
 
 <div
   style={{
@@ -70,7 +96,10 @@ const handleVoiceCommand = (command) => {
     alignItems: "center",
   }}
 >
-  <span>🟢 {selectedDevice || "No device selected"}</span>
+ <span>
+  {deviceStatus === "Online" ? "🟢" : "🔴"}{" "}
+ {selectedDevice || "No device selected"}
+</span>
 
   <button
     style={{
@@ -95,6 +124,7 @@ const handleVoiceCommand = (command) => {
 >
   Device Manager
 </button>
+
   </button>
 </div>
 
@@ -114,6 +144,16 @@ const handleVoiceCommand = (command) => {
 >
   <CameraFeed facingMode={facingMode} />
 </div>
+
+<GestureControl
+  onBrightnessChange={(value) => {
+    setBrightness(value);
+
+    if (selectedDevice) {
+      sendBrightness(selectedDevice, value);
+    }
+  }}
+/>
 
 {/* Brightness */}
 <div
@@ -216,7 +256,50 @@ onMouseUp={(e) => {
 ))}
 
 
+<div
+  style={{
+    marginTop: "40px",
+    textAlign: "center",
+    color: "#94a3b8",
+    fontSize: "14px",
+  }}
+>
+  <p>
+    Developed by Birbal Kumar | B.Tech CSE | Robomanthan Pvt Ltd
+  </p>
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      gap: "20px",
+      marginTop: "10px",
+    }}
+  >
+    <a
+  href="https://www.linkedin.com/in/birbalkumar-sf32/"
+  target="_blank"
+  rel="noreferrer"
+  style={{ color: "#60a5fa" }}
+>
+  <FaLinkedin size={24} />
+</a>
+
+<a
+  href="https://github.com/Birbal5040"
+  target="_blank"
+  rel="noreferrer"
+  style={{ color: "#60a5fa" }}
+>
+  <FaGithub size={24} />
+</a>
+  </div>
+</div>
+
+
       </div>
+
+
     </div>
   );
 }
