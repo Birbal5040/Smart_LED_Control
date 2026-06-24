@@ -4,16 +4,38 @@ import DeviceCard from "../components/DeviceCard";
 import { useNavigate } from "react-router-dom";
 import { getDevices } from "../services/deviceStore";
 import VoiceControl from "../components/VoiceControl";
-import { sendBrightness } from "../services/adafruitApi";
+// import { sendBrightness } from "../services/adafruitApi";
 import GestureControl from "../components/GestureControl";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import {
+  sendBrightness,
+  sendToAllDevices,
+  sendPower,
+  resetDevice,
+} from "../services/adafruitApi";
+import {
+  getDiscoveredDevices,
+  getRegistryHeartbeat
+} from "../services/discoveryService";
+
+
+
 function Dashboard() {
   const navigate = useNavigate();
   const [brightness, setBrightness] = useState(50);
-  const [selectedDevice, setSelectedDevice] = useState(
+  const [selectedDevice, setSelectedDevice] =
+  useState(
+    localStorage.getItem(
+      "selectedDevice"
+    ) || null
+  );
   localStorage.getItem("selectedDevice")
-);
+
   const [deviceStatus, setDeviceStatus] = useState("Online");
+  const [lastHeartbeat, setLastHeartbeat] =
+    useState(Date.now());
+  const [lastSeen, setLastSeen] =  useState(Date.now());
+  const [controlMode, setControlMode] =  useState("selected");
   const [facingMode, setFacingMode] = useState("user");
 useEffect(() => {
   if (selectedDevice) {
@@ -23,6 +45,38 @@ useEffect(() => {
     );
   }
 }, [selectedDevice]);
+
+useEffect(() => {
+  getRegistryHeartbeat();
+
+  const interval = setInterval(() => {
+    getRegistryHeartbeat();
+  }, 30000);
+
+  return () => clearInterval(interval);
+}, []);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    const last =
+      localStorage.getItem(
+        "lastHeartbeat"
+      );
+
+    if (
+      last &&
+      Date.now() - Number(last) <
+        90000
+    ) {
+      setDeviceStatus("Online");
+    } else {
+      setDeviceStatus("Offline");
+    }
+  }, 5000);
+
+  return () =>
+    clearInterval(interval);
+}, []);
 
 
 const handleVoiceCommand = (command) => {
@@ -96,22 +150,54 @@ const handleVoiceCommand = (command) => {
     alignItems: "center",
   }}
 >
- <span>
-  {deviceStatus === "Online" ? "🟢" : "🔴"}{" "}
- {selectedDevice || "No device selected"}
+ 
+  <span>
+  {deviceStatus === "Online"
+  ? "🟢"
+  : "🔴"}{" "}
+{selectedDevice}
+(
+{deviceStatus}
+)
 </span>
 
-  <button
-    style={{
-      background: "#2563eb",
-      color: "white",
-      border: "none",
-      padding: "10px 15px",
-      borderRadius: "8px",
-      cursor: "pointer",
-    }}
-  >
-   <button
+
+
+
+<div
+  style={{
+    marginTop: "10px",
+    display: "flex",
+    gap: "15px",
+    alignItems: "center",
+  }}
+>
+  <label>
+    <input
+      type="radio"
+      checked={controlMode === "selected"}
+      onChange={() =>
+        setControlMode("selected")
+      }
+    />
+    Selected Device
+  </label>
+
+  <label>
+    <input
+      type="radio"
+      checked={controlMode === "all"}
+      onChange={() =>
+        setControlMode("all")
+      }
+    />
+    All Devices
+  </label>
+</div>
+
+
+
+ <button
   onClick={() => navigate("/devices")}
   style={{
     background: "#2563eb",
@@ -124,8 +210,6 @@ const handleVoiceCommand = (command) => {
 >
   Device Manager
 </button>
-
-  </button>
 </div>
 
 
@@ -149,9 +233,11 @@ const handleVoiceCommand = (command) => {
   onBrightnessChange={(value) => {
     setBrightness(value);
 
-    if (selectedDevice) {
-      sendBrightness(selectedDevice, value);
-    }
+   if (controlMode === "all") {
+  sendToAllDevices(value);
+} else if (selectedDevice) {
+  sendBrightness(selectedDevice, value);
+}
   }}
 />
 
@@ -179,7 +265,14 @@ onMouseUp={(e) => {
   const value = Number(e.target.value);
 
   if (selectedDevice) {
-    sendBrightness(selectedDevice, value);
+    if (controlMode === "all") {
+  sendToAllDevices(value);
+} else {
+  sendBrightness(
+    selectedDevice,
+    value
+  );
+}
   }
     console.log(
       "Device:",
@@ -201,6 +294,49 @@ onMouseUp={(e) => {
     💡 Brightness: {brightness}%
   </p>
 </div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "10px",
+    marginTop: "15px",
+  }}
+>
+  <button
+    onClick={() =>
+      sendPower(
+        selectedDevice,
+        true
+      )
+    }
+  >
+    💡 ON
+  </button>
+
+  <button
+    onClick={() =>
+      sendPower(
+        selectedDevice,
+        false
+      )
+    }
+  >
+    ⚫ OFF
+  </button>
+</div>
+
+<button
+  onClick={() =>
+    resetDevice(
+      selectedDevice
+    )
+  }
+>
+  🔄 Reset Device
+</button>
+
+
+
 
       {/* Controls */}
       <div
