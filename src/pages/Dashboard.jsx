@@ -23,20 +23,20 @@ import {
 function Dashboard() {
   const navigate = useNavigate();
   const [brightness, setBrightness] = useState(50);
-  const [selectedDevice, setSelectedDevice] =
-  useState(
-    localStorage.getItem(
-      "selectedDevice"
-    ) || null
-  );
-  localStorage.getItem("selectedDevice")
 
-  const [deviceStatus, setDeviceStatus] = useState("Online");
-  const [lastHeartbeat, setLastHeartbeat] =
-    useState(Date.now());
-  const [lastSeen, setLastSeen] =  useState(Date.now());
-  const [controlMode, setControlMode] =  useState("selected");
-  const [facingMode, setFacingMode] = useState("user");
+const [selectedDevice, setSelectedDevice] = useState(
+  localStorage.getItem("selectedDevice") || null
+);
+
+const [deviceStatus, setDeviceStatus] = useState("Offline");
+
+const [controlMode, setControlMode] = useState("selected");
+
+const [facingMode, setFacingMode] = useState("user");
+
+const [cameraEnabled, setCameraEnabled] = useState(false);
+  
+  
 useEffect(() => {
   if (selectedDevice) {
     localStorage.setItem(
@@ -105,34 +105,34 @@ const handleVoiceCommand = (command) => {
 ];
   return (
     
-    <div
-    
-      style={{
-        minHeight: "100vh",
-        background: "#0f172a",
-        color: "white",
-        padding: "20px",
-        
-        
-        
-      }}
-
-      
-    >
+   <div
+  style={{
+    minHeight: "100vh",
+    background: "#1d0f2a",
+    color: "white",
+    padding: "20px",
+    maxWidth: "1200px",
+    margin: "0 auto",
+    width: "100%",
+    boxSizing: "border-box",
+  }}
+>
 <h1
   style={{
+    fontSize: "clamp(2rem,5vw,3.5rem)",
+    marginTop: "30px",
+    marginBottom: "10px",
     textAlign: "center",
     color: "white",
-    fontSize: "3rem",
-    marginBottom: "20px",
   }}
 >
   Smart LED Dashboard
 </h1>
 <p
   style={{
-    textAlign: "center",
     color: "#94a3b8",
+    textAlign: "center",
+    fontSize: "clamp(0.9rem,2vw,1.1rem)",
     marginBottom: "25px",
   }}
 >
@@ -148,18 +148,30 @@ const handleVoiceCommand = (command) => {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    flexWrap: "wrap",
+    gap: "15px",
   }}
 >
  
-  <span>
-  {deviceStatus === "Online"
-  ? "🟢"
-  : "🔴"}{" "}
-{selectedDevice}
-(
-{deviceStatus}
-)
-</span>
+ <div
+  style={{
+    fontSize: "18px",
+    fontWeight: "bold",
+  }}
+>
+  {deviceStatus === "Online" ? "🟢" : "🔴"}{" "}
+  {selectedDevice || "No Device Selected"}
+
+  <div
+    style={{
+      fontSize: "14px",
+      color: "#94a3b8",
+      marginTop: "5px",
+    }}
+  >
+    Status: {deviceStatus}
+  </div>
+</div>
 
 
 
@@ -219,38 +231,83 @@ const handleVoiceCommand = (command) => {
      {/* Camera Section */}
 <div
   style={{
-    height: "250px",
-    background: "#1e293b",
-    borderRadius: "15px",
-    marginTop: "20px",
-    overflow: "hidden",
+  background:"#1e293b",
+  padding:"20px",
+  marginTop:"20px",
+  borderRadius:"15px",
+  width:"100%",
+  boxSizing:"border-box",
+}}
+>
+  {cameraEnabled ? (
+  <CameraFeed
+    facingMode={facingMode}
+  />
+) : (
+  <div
+  style={{
+    height: "280px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#94a3b8",
   }}
 >
-  <CameraFeed facingMode={facingMode} />
+  <h1 style={{ fontSize: "60px" }}>📷</h1>
+
+  <h3>Camera is OFF</h3>
+
+  <p>
+    Click "Start Camera" below
+  </p>
+</div>
+)}
 </div>
 
-<GestureControl
-  onBrightnessChange={(value) => {
-    setBrightness(value);
-
-   if (controlMode === "all") {
-  sendToAllDevices(value);
-} else if (selectedDevice) {
-  sendBrightness(selectedDevice, value);
-}
+<div
+  style={{
+    background: "#1e293b",
+    padding: "20px",
+    marginTop: "20px",
+    borderRadius: "15px",
+    width: "100%",
+    boxSizing: "border-box",
   }}
-/>
+>
+  <GestureControl
+    onBrightnessChange={(value) => {
+      setBrightness(value);
+
+      if (controlMode === "all") {
+        sendToAllDevices(value);
+      } else if (selectedDevice) {
+        sendBrightness(selectedDevice, value);
+      }
+    }}
+  />
+</div>
 
 {/* Brightness */}
 <div
   style={{
-    marginTop: "20px",
-    padding: "15px",
-    background: "#1e293b",
-    borderRadius: "15px",
+  background:"#1e293b",
+  padding:"20px",
+  marginTop:"20px",
+  borderRadius:"15px",
+  width:"100%",
+  boxSizing:"border-box",
+}}
+>
+  <h3
+  style={{
+    textAlign: "center",
+    fontSize: "22px",
+    marginBottom: "20px",
   }}
 >
-  <h3>Brightness</h3>
+  💡 Brightness Control
+</h3>
 
   <input
   type="range"
@@ -281,106 +338,242 @@ onMouseUp={(e) => {
       value
     );
   }}
-  style={{ width: "100%" }}
+  style={{
+  width: "100%",
+  cursor: "pointer",
+}}
 />
 
   <p
-    style={{
-      textAlign: "center",
-      marginTop: "10px",
-      fontSize: "18px",
-    }}
-  >
+  style={{
+    textAlign: "center",
+    marginTop: "15px",
+    fontSize: "22px",
+    fontWeight: "bold",
+    color: "#60a5fa",
+  }}
+>
     💡 Brightness: {brightness}%
   </p>
 </div>
 
 <div
   style={{
-    display: "flex",
-    gap: "10px",
-    marginTop: "15px",
+  background:"#1e293b",
+  padding:"20px",
+  marginTop:"20px",
+  borderRadius:"15px",
+  width:"100%",
+  boxSizing:"border-box",
+}}
+>
+  <h3
+  style={{
+    textAlign: "center",
+    marginBottom: "25px",
+    fontSize: "24px",
   }}
 >
-  <button
-    onClick={() =>
-      sendPower(
-        selectedDevice,
-        true
-      )
-    }
-  >
-    💡 ON
-  </button>
+    Device Controls
+  </h3>
 
-  <button
-    onClick={() =>
-      sendPower(
-        selectedDevice,
-        false
-      )
-    }
+  <div
+    style={{
+      display: "flex",
+      gap: "15px",
+      flexWrap: "wrap",
+      justifyContent: "center",
+    }}
   >
-    ⚫ OFF
-  </button>
+    <button
+      onClick={() =>
+        sendPower(selectedDevice, true)
+      }
+      onMouseEnter={(e) => {
+  e.target.style.transform =
+    "scale(1.05)";
+  e.target.style.boxShadow =
+    "0 8px 20px rgba(0,0,0,0.4)";
+}}
+
+onMouseLeave={(e) => {
+  e.target.style.transform =
+    "scale(1)";
+}}
+      style={{
+  flex: 1,
+  minWidth: "180px",
+  padding: "15px",
+  background: "#22c55e",
+  color: "white",
+  border: "none",
+  borderRadius: "12px",
+  fontSize: "18px",
+  cursor: "pointer",
+  transition: "all 0.3s ease",
+  height: "60px",
+  width: "100%",
+}}
+    >
+      💡 Turn ON
+    </button>
+
+    <button
+      onClick={() =>
+        sendPower(selectedDevice, false)
+      }
+      onMouseEnter={(e) => {
+  e.target.style.transform =
+    "scale(1.05)";
+  e.target.style.boxShadow =
+    "0 8px 20px rgba(0,0,0,0.4)";
+}}
+
+onMouseLeave={(e) => {
+  e.target.style.transform =
+    "scale(1)";
+  e.target.style.boxShadow =
+    "0 4px 12px rgba(0,0,0,0.3)";
+}}
+      style={{
+  flex: 1,
+  minWidth: "180px",
+  padding: "15px",
+  background: "#ef4444",
+  color: "white",
+  border: "none",
+  borderRadius: "12px",
+  fontSize: "18px",
+  cursor: "pointer",
+  transition: "all 0.3s ease",
+  height: "60px",
+  width: "100%",
+}}
+    >
+      ⚫ Turn OFF
+    </button>
+
+    <button
+      onClick={() =>
+        resetDevice(selectedDevice)
+      }
+     onMouseEnter={(e) => {
+  e.target.style.transform =
+    "scale(1.05)";
+  e.target.style.boxShadow =
+    "0 8px 20px rgba(0,0,0,0.4)";
+}}
+
+onMouseLeave={(e) => {
+  e.target.style.transform =
+    "scale(1)";
+  e.target.style.boxShadow =
+    "0 4px 12px rgba(0,0,0,0.3)";
+}}
+      style={{
+  flex: 1,
+  minWidth: "180px",
+  padding: "15px",
+  background: "#f59e0b",
+  color: "white",
+  border: "none",
+  borderRadius: "12px",
+  fontSize: "18px",
+  cursor: "pointer",
+  transition: "all 0.3s ease",
+  height: "60px",
+  width: "100%",
+}}
+    >
+      🔄 Reset Device
+    </button>
+  </div>
 </div>
 
-<button
-  onClick={() =>
-    resetDevice(
-      selectedDevice
-    )
-  }
+
+
+{/* Controls */}
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns:
+    "repeat(auto-fit,minmax(220px,1fr))",
+    gap: "15px",
+    marginTop: "20px",
+  }}
 >
-  🔄 Reset Device
-</button>
+  
+  <button
+    onClick={() =>
+      setFacingMode(
+        facingMode === "user"
+          ? "environment"
+          : "user"
+      )
+    }
+    style={{
+      padding: "15px",
+      background: "#2563eb",
+      color: "white",
+      border: "none",
+      borderRadius: "12px",
+      cursor: "pointer",
+      fontSize: "16px",
+    }}
+  >
+    🔄 Flip Camera
+  </button>
 
-
-
-
-      {/* Controls */}
-      <div
-        style={{
-          display: "flex",
-          gap: "15px",
-          marginTop: "20px",
-        }}
-      >
-        <VoiceControl
+  <button
+    onClick={() =>
+      setCameraEnabled(
+        !cameraEnabled
+      )
+    }
+    style={{
+      padding: "15px",
+      background:
+        cameraEnabled
+          ? "#ef4444"
+          : "#22c55e",
+      color: "white",
+      border: "none",
+      borderRadius: "12px",
+      cursor: "pointer",
+      fontSize: "16px",
+    }}
+  >
+    {cameraEnabled
+      ? "⏹ Stop Camera"
+      : "▶️ Start Camera"}
+  </button>
+<VoiceControl
   onCommand={handleVoiceCommand}
 />
 
-       <button
-  onClick={() =>
-    setFacingMode(
-      facingMode === "user"
-        ? "environment"
-        : "user"
-    )
-  }
-  style={{
-    flex: 1,
-    padding: "15px",
-    borderRadius: "12px",
-    border: "none",
-    background: "#2563eb",
-    color: "white",
-  }}
->
-  📷 Flip Camera
-</button>
-      </div>
+</div>
+
 
       {/* Devices */}
       <div
         style={{
-          marginTop: "25px",
-          background: "#1e293b",
-          padding: "20px",
-          borderRadius: "15px",
-        }}
+  background:"#1e293b",
+  padding:"20px",
+  marginTop:"20px",
+  borderRadius:"15px",
+  width:"100%",
+  boxSizing:"border-box",
+}}
       >
-        <h3>Devices</h3>
+     <h3
+  style={{
+    textAlign: "center",
+    marginBottom: "20px",
+    fontSize: "24px",
+  }}
+>
+  📡 Connected Devices
+</h3>
 
       {getDevices().map((device, index) => (
   <DeviceCard
@@ -400,9 +593,21 @@ onMouseUp={(e) => {
     fontSize: "14px",
   }}
 >
-  <p>
-    Developed by Birbal Kumar | B.Tech CSE | Robomanthan Pvt Ltd
-  </p>
+  <p
+  style={{
+    lineHeight: "1.8",
+  }}
+>
+  Developed with ❤️ by <b>Birbal Kumar</b>
+
+  <br />
+
+  B.Tech CSE | AI & Robotics Intern
+
+  <br />
+
+  Robomanthan Pvt. Ltd.
+</p>
 
   <div
     style={{
@@ -412,22 +617,48 @@ onMouseUp={(e) => {
       marginTop: "10px",
     }}
   >
-    <a
+   <a
   href="https://www.linkedin.com/in/birbalkumar-sf32/"
   target="_blank"
   rel="noreferrer"
-  style={{ color: "#60a5fa" }}
+  style={{
+    color: "#60a5fa",
+    transition: "all 0.3s ease",
+    display: "inline-flex",
+  }}
+  onMouseEnter={(e) => {
+  e.currentTarget.style.transform = "scale(1.25)";
+  e.currentTarget.style.filter =
+    "drop-shadow(0 0 10px #60a5fa)";
+}}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform = "scale(1)";
+    e.currentTarget.style.filter = "none";
+  }}
 >
-  <FaLinkedin size={24} />
+  <FaLinkedin size={30} />
 </a>
 
 <a
   href="https://github.com/Birbal5040"
   target="_blank"
   rel="noreferrer"
-  style={{ color: "#60a5fa" }}
+  style={{
+    color: "#60a5fa",
+    transition: "all 0.3s ease",
+    display: "inline-flex",
+  }}
+ onMouseEnter={(e) => {
+  e.currentTarget.style.transform = "scale(1.25)";
+  e.currentTarget.style.filter =
+    "drop-shadow(0 0 10px #60a5fa)";
+}}
+  onMouseLeave={(e) => {
+  e.currentTarget.style.transform = "scale(1)";
+  e.currentTarget.style.filter = "none";
+}}
 >
-  <FaGithub size={24} />
+  <FaGithub size={30} />
 </a>
   </div>
 </div>

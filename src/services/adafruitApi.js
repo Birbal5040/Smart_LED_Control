@@ -1,8 +1,5 @@
-const AIO_USERNAME =
-  import.meta.env.VITE_AIO_USERNAME;
-
-const AIO_KEY =
-  import.meta.env.VITE_AIO_KEY;
+const AIO_USERNAME = import.meta.env.VITE_AIO_USERNAME;
+const AIO_KEY = import.meta.env.VITE_AIO_KEY;
 
 export async function sendBrightness(device, value) {
   try {

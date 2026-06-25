@@ -1,5 +1,5 @@
-const AIO_USERNAME = "Birbal_Kumar5040";
-const AIO_KEY = "REMOVED_SECRET";
+const AIO_USERNAME = import.meta.env.VITE_AIO_USERNAME;
+const AIO_KEY = import.meta.env.VITE_AIO_KEY;
 
 export async function getDiscoveredDevices() {
   try {
