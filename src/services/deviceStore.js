@@ -1,7 +1,5 @@
 export const getDevices = () => {
-  return JSON.parse(localStorage.getItem("devices")) || [
-    "Living Room LED",
-  ];
+  return JSON.parse(localStorage.getItem("devices")) || [];
 };
 
 export const saveDevices = (devices) => {

@@ -18,39 +18,44 @@ async function loadDevices() {
   const devices = await getDiscoveredDevices();
   setDiscoveredDevices(devices);
 }
-  const addDevice = (deviceName = null) => {
-  const name =
-    deviceName || prompt("Enter Device Name");
+const addDevice = (feedName, displayName) => {
+  const cleanFeed = feedName
+    .trim()
+    .replace(/\.$/, "")
+    .toLowerCase();
 
+  const cleanName = displayName.trim();
 
-
-  if (name) {
-    const updated = [...devices, name];
-
-    setDevices(updated);
-    saveDevices(updated);
-  }
-};
-
- const deleteDevice = (deviceName) => {
-    const updated = devices.filter(
-      (device) => device !== deviceName
-    );
-
-    setDevices(updated);
-    saveDevices(updated);
+  const newDevice = {
+    name: cleanName,
+    feed: cleanFeed,
   };
 
+  const updated = [...devices, newDevice];
 
-const selectDevice = (deviceName) => {
-  localStorage.setItem(
-    "selectedDevice",
-    deviceName
+  setDevices(updated);
+  saveDevices(updated);
+};
+
+const deleteDevice = (feed) => {
+  const updated = devices.filter(
+    (device) => device.feed !== feed
   );
 
-  setSelectedDevice(deviceName);
+  setDevices(updated);
+  saveDevices(updated);
+};
 
-  alert(`${deviceName} selected!`);
+
+const selectDevice = (device) => {
+  localStorage.setItem(
+    "selectedDevice",
+    JSON.stringify(device)
+  );
+
+  setSelectedDevice(device);
+
+  alert(`${device.name} selected!`);
 };
 
 
@@ -147,7 +152,7 @@ const selectDevice = (deviceName) => {
         );
 
         if (friendlyName) {
-          addDevice(friendlyName);
+          addDevice(device.key, friendlyName);
         }
       }}
       style={{
@@ -188,9 +193,9 @@ const selectDevice = (deviceName) => {
     }}
   >
   <div>
-  {selectedDevice === device
-    ? `🟢 ${device} (Selected)`
-    : device}
+  {selectedDevice?.feed === device.feed
+  ? `🟢 ${device.name} (Selected)`
+  : device.name}
 </div>
 
     <div
@@ -214,7 +219,7 @@ const selectDevice = (deviceName) => {
   </button>
 
   <button
-    onClick={() => deleteDevice(device)}
+    onClick={() => deleteDevice(device.feed)}
     style={{
       background: "#ef4444",
       color: "white",

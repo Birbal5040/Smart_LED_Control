@@ -3,14 +3,16 @@ const AIO_KEY = import.meta.env.VITE_AIO_KEY;
 
 export async function sendBrightness(device, value) {
   try {
-    const feedName =
-      device.toLowerCase().replace(/\s+/g, "-");
+    const feedName = device;
    
     console.log("Feed Name:", feedName);
-
-    const url =
+    
+   const url =
   `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${feedName}/data`;
-  
+
+console.log("URL =", JSON.stringify(url));
+console.log("Feed =", JSON.stringify(feedName));
+
 
     const response = await fetch(url, {
       method: "POST",
@@ -67,8 +69,7 @@ export async function sendPower(
   power
 ) {
   try {
-    const feedName =
-      device.toLowerCase();
+    const feedName = device;
 
     const url =
       `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${feedName}/data`;
@@ -107,8 +108,7 @@ export async function resetDevice(
     return;
   }
   try {
-    const feedName =
-      device.toLowerCase();
+    const feedName = device;
 
     const url =
       `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${feedName}/data`;

@@ -24,9 +24,15 @@ function Dashboard() {
   const navigate = useNavigate();
   const [brightness, setBrightness] = useState(50);
 
-const [selectedDevice, setSelectedDevice] = useState(
-  localStorage.getItem("selectedDevice") || null
-);
+const [selectedDevice, setSelectedDevice] =
+useState(() => {
+  const saved =
+    localStorage.getItem("selectedDevice");
+
+  return saved
+    ? JSON.parse(saved)
+    : null;
+});
 
 const [deviceStatus, setDeviceStatus] = useState("Offline");
 
@@ -41,7 +47,7 @@ useEffect(() => {
   if (selectedDevice) {
     localStorage.setItem(
       "selectedDevice",
-      selectedDevice
+      JSON.stringify(selectedDevice)
     );
   }
 }, [selectedDevice]);
@@ -80,23 +86,40 @@ useEffect(() => {
 
 
 const handleVoiceCommand = (command) => {
-  console.log(command);
+  console.log("Voice:", command);
 
-  if (command.includes("turn off")) {
-    setBrightness(0);
+  if (!selectedDevice) {
+    alert("Please select a device first.");
+    return;
   }
 
+  // Turn ON
   if (command.includes("turn on")) {
     setBrightness(100);
+
+    sendPower(selectedDevice.feed, true);
+    return;
   }
 
+  // Turn OFF
+  if (command.includes("turn off")) {
+    setBrightness(0);
+
+    sendPower(selectedDevice.feed, false);
+    return;
+  }
+
+  // Brightness
   const match = command.match(/\d+/);
 
   if (match) {
-    setBrightness(Number(match[0]));
+    const value = Number(match[0]);
+
+    setBrightness(value);
+
+    sendBrightness(selectedDevice.feed, value);
   }
 };
-
   // const [selectedDevice, setSelectedDevice] = useState("🟢 {selectedDevice}");
   const devices = [
   { id: 1, name: "Living Room LED", status: true },
@@ -160,7 +183,7 @@ const handleVoiceCommand = (command) => {
   }}
 >
   {deviceStatus === "Online" ? "🟢" : "🔴"}{" "}
-  {selectedDevice || "No Device Selected"}
+  {selectedDevice?.name || "No Device Selected"}
 
   <div
     style={{
@@ -282,7 +305,7 @@ const handleVoiceCommand = (command) => {
       if (controlMode === "all") {
         sendToAllDevices(value);
       } else if (selectedDevice) {
-        sendBrightness(selectedDevice, value);
+        sendBrightness(selectedDevice.feed, value)
       }
     }}
   />
@@ -321,15 +344,15 @@ const handleVoiceCommand = (command) => {
 onMouseUp={(e) => {
   const value = Number(e.target.value);
 
+  console.log("Selected Device:", selectedDevice);
+  console.log("Control Mode:", controlMode);
+
   if (selectedDevice) {
     if (controlMode === "all") {
-  sendToAllDevices(value);
-} else {
-  sendBrightness(
-    selectedDevice,
-    value
-  );
-}
+      sendToAllDevices(value);
+    } else {
+      sendBrightness(selectedDevice.feed, value);
+    }
   }
     console.log(
       "Device:",
@@ -387,7 +410,7 @@ onMouseUp={(e) => {
   >
     <button
       onClick={() =>
-        sendPower(selectedDevice, true)
+        sendPower(selectedDevice.feed, true)
       }
       onMouseEnter={(e) => {
   e.target.style.transform =
@@ -420,7 +443,7 @@ onMouseLeave={(e) => {
 
     <button
       onClick={() =>
-        sendPower(selectedDevice, false)
+        sendPower(selectedDevice.feed, false)
       }
       onMouseEnter={(e) => {
   e.target.style.transform =
@@ -455,7 +478,7 @@ onMouseLeave={(e) => {
 
     <button
       onClick={() =>
-        resetDevice(selectedDevice)
+        resetDevice(selectedDevice.feed)
       }
      onMouseEnter={(e) => {
   e.target.style.transform =
@@ -578,7 +601,7 @@ onMouseLeave={(e) => {
       {getDevices().map((device, index) => (
   <DeviceCard
   key={index}
-  name={device}
+  name={device.name}
   status="Online"
   onSelect={setSelectedDevice}
 />
@@ -670,5 +693,7 @@ onMouseLeave={(e) => {
     </div>
   );
 }
+
+// console.log("Selected Device JSON:", JSON.stringify(selectedDevice));
 
 export default Dashboard;
