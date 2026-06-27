@@ -24,14 +24,20 @@ function Dashboard() {
   const navigate = useNavigate();
   const [brightness, setBrightness] = useState(50);
 
-const [selectedDevice, setSelectedDevice] =
-useState(() => {
-  const saved =
-    localStorage.getItem("selectedDevice");
+const [selectedDevice, setSelectedDevice] = useState(() => {
+  const saved = localStorage.getItem("selectedDevice");
 
-  return saved
-    ? JSON.parse(saved)
-    : null;
+  if (!saved) return null;
+
+  try {
+    return JSON.parse(saved);
+  } catch {
+    // Old format stored as plain string
+    return {
+      name: saved,
+      feed: saved,
+    };
+  }
 });
 
 const [deviceStatus, setDeviceStatus] = useState("Offline");
