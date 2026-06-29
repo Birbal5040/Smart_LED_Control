@@ -64,37 +64,33 @@ export async function sendToAllDevices(
   }
 }
 
-export async function sendPower(
-  device,
-  power
-) {
+export async function sendPower(device, power) {
   try {
+    console.log("========== sendPower ==========");
+    console.log("Feed:", device);
+    console.log("Power:", power);
+
     const feedName = device;
 
     const url =
       `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${feedName}/data`;
 
-    const response = await fetch(
-      url,
-      {
-        method: "POST",
-        headers: {
-          "X-AIO-Key": AIO_KEY,
-          "Content-Type":
-            "application/json",
-        },
-        body: JSON.stringify({
-          value: power
-            ? "1,255"
-            : "0,0",
-        }),
-      }
-    );
+    console.log("URL:", url);
 
-    const data =
-      await response.json();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "X-AIO-Key": AIO_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        value: power ? "1,255" : "0,0",
+      }),
+    });
 
-    console.log(data);
+    const data = await response.json();
+
+    console.log("Response:", data);
   } catch (error) {
     console.error(error);
   }

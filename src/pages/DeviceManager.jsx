@@ -6,9 +6,11 @@ import { getDiscoveredDevices } from "../services/discoveryService";
 function DeviceManager() {
   const navigate = useNavigate();
    const [devices, setDevices] = useState(getDevices());
-   const [selectedDevice, setSelectedDevice] = useState(
-  localStorage.getItem("selectedDevice")
-);
+  const [selectedDevice, setSelectedDevice] = useState(() => {
+  const saved = localStorage.getItem("selectedDevice");
+
+  return saved ? JSON.parse(saved) : null;
+});
    const [discoveredDevices, setDiscoveredDevices] = useState([]);
    useEffect(() => {
   loadDevices();
@@ -19,12 +21,14 @@ async function loadDevices() {
   setDiscoveredDevices(devices);
 }
 const addDevice = (feedName, displayName) => {
-  const cleanFeed = feedName
-    .trim()
-    .replace(/\.$/, "")
-    .toLowerCase();
-
+  const cleanFeed = feedName.trim().replace(/\.$/, "").toLowerCase();
   const cleanName = displayName.trim();
+
+  // Prevent duplicate feeds
+  if (devices.some(device => device.feed === cleanFeed)) {
+    alert("This device has already been added.");
+    return;
+  }
 
   const newDevice = {
     name: cleanName,

@@ -7,7 +7,7 @@ function VoiceControl({ onCommand }) {
       window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Speech Recognition is not supported in this browser.");
+      alert("Speech Recognition is not supported.");
       return;
     }
 
@@ -18,14 +18,27 @@ function VoiceControl({ onCommand }) {
     recognition.interimResults = false;
 
     recognition.onstart = () => {
-      console.log("🎤 Listening started...");
+      alert("Listening Started");
+      console.log("Listening Started");
+    };
+
+    recognition.onspeechstart = () => {
+      alert("Speech Detected");
+      console.log("Speech Detected");
+    };
+
+    recognition.onspeechend = () => {
+      alert("Speech Ended");
+      console.log("Speech Ended");
     };
 
     recognition.onresult = (event) => {
       const command =
         event.results[0][0].transcript.toLowerCase();
 
-      console.log("Voice Command:", command);
+      alert("You said: " + command);
+
+      console.log(command);
 
       if (onCommand) {
         onCommand(command);
@@ -33,35 +46,20 @@ function VoiceControl({ onCommand }) {
     };
 
     recognition.onerror = (event) => {
-      console.error("Speech Error:", event.error);
-
-      if (event.error === "not-allowed") {
-        alert("Please allow microphone permission.");
-      }
+      alert("Error: " + event.error);
+      console.log(event.error);
     };
 
     recognition.onend = () => {
-      console.log("🎤 Listening stopped");
+      alert("Recognition Ended");
+      console.log("Recognition Ended");
     };
 
-    // IMPORTANT: Start listening
     recognition.start();
   };
 
   return (
-    <button
-      onClick={startListening}
-      style={{
-        flex: 1,
-        padding: "15px",
-        borderRadius: "12px",
-        border: "none",
-        background: "#2563eb",
-        color: "white",
-        cursor: "pointer",
-        fontSize: "16px",
-      }}
-    >
+    <button onClick={startListening}>
       🎤 Voice
     </button>
   );

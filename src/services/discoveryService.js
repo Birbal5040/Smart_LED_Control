@@ -29,7 +29,7 @@ export async function getDiscoveredDevices() {
 export async function getRegistryHeartbeat() {
   try {
     const response = await fetch(
-      `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/smartled-registry/data?limit=1`,
+      `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/smartled-registry/data/last`,
       {
         headers: {
           "X-AIO-Key": AIO_KEY,
@@ -39,12 +39,18 @@ export async function getRegistryHeartbeat() {
 
     const data = await response.json();
 
-    if (data.length > 0) {
-      localStorage.setItem(
-        "lastHeartbeat",
-        new Date(data[0].created_at).getTime()
-      );
-    }
+    console.log("Latest Heartbeat:", data);
+
+    localStorage.setItem(
+      "lastHeartbeat",
+      new Date(data.created_at).getTime()
+    );
+
+    localStorage.setItem(
+      "lastHeartbeatDevice",
+      data.value
+    );
+
   } catch (error) {
     console.error(error);
   }

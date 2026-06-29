@@ -70,25 +70,26 @@ useEffect(() => {
 
 useEffect(() => {
   const interval = setInterval(() => {
-    const last =
-      localStorage.getItem(
-        "lastHeartbeat"
-      );
+    const lastHeartbeat = Number(
+      localStorage.getItem("lastHeartbeat")
+    );
+
+    const heartbeatDevice =
+      localStorage.getItem("lastHeartbeatDevice");
 
     if (
-      last &&
-      Date.now() - Number(last) <
-        90000
+      selectedDevice &&
+      heartbeatDevice === selectedDevice.feed &&
+      Date.now() - lastHeartbeat < 90000
     ) {
       setDeviceStatus("Online");
     } else {
       setDeviceStatus("Offline");
     }
-  }, 5000);
+  }, 2000);
 
-  return () =>
-    clearInterval(interval);
-}, []);
+  return () => clearInterval(interval);
+}, [selectedDevice]);
 
 
 const handleVoiceCommand = (command) => {
@@ -415,9 +416,16 @@ onMouseUp={(e) => {
     }}
   >
     <button
-      onClick={() =>
-        sendPower(selectedDevice.feed, true)
-      }
+     onClick={() => {
+  console.log("Selected Device:", selectedDevice);
+
+  if (!selectedDevice) {
+    alert("Please select a device first.");
+    return;
+  }
+
+  sendPower(selectedDevice.feed, true);
+}}
       onMouseEnter={(e) => {
   e.target.style.transform =
     "scale(1.05)";
