@@ -1,6 +1,11 @@
+import { useState } from "react";
+
 function VoiceControl({ onCommand }) {
+  const [voiceStatus, setVoiceStatus] = useState("🎤 Voice Assistant");
+  const [isListening, setIsListening] = useState(false);
+
   const startListening = () => {
-    console.log("Voice button clicked");
+    if (isListening) return;
 
     const SpeechRecognition =
       window.SpeechRecognition ||
@@ -16,42 +21,51 @@ function VoiceControl({ onCommand }) {
     recognition.lang = "en-US";
     recognition.continuous = false;
     recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
-      alert("Listening Started");
-      console.log("Listening Started");
-    };
-
-    recognition.onspeechstart = () => {
-      alert("Speech Detected");
-      console.log("Speech Detected");
-    };
-
-    recognition.onspeechend = () => {
-      alert("Speech Ended");
-      console.log("Speech Ended");
+      setIsListening(true);
+      setVoiceStatus("🎙️ Listening...");
+      console.log("Listening...");
     };
 
     recognition.onresult = (event) => {
       const command =
-        event.results[0][0].transcript.toLowerCase();
+        event.results[0][0].transcript.toLowerCase().trim();
 
-      alert("You said: " + command);
-
-      console.log(command);
+      console.log("Voice Command:", command);
 
       if (onCommand) {
         onCommand(command);
       }
+
+      setVoiceStatus(`✅ ${command}`);
     };
 
     recognition.onerror = (event) => {
-      alert("Error: " + event.error);
       console.log(event.error);
+
+      switch (event.error) {
+        case "no-speech":
+          setVoiceStatus("❌ No Speech");
+          break;
+
+        case "not-allowed":
+          setVoiceStatus("❌ Permission Denied");
+          break;
+
+        default:
+          setVoiceStatus("❌ Voice Error");
+      }
     };
 
     recognition.onend = () => {
-      alert("Recognition Ended");
+      setIsListening(false);
+
+      setTimeout(() => {
+        setVoiceStatus("🎤 Voice Assistant");
+      }, 1500);
+
       console.log("Recognition Ended");
     };
 
@@ -59,9 +73,27 @@ function VoiceControl({ onCommand }) {
   };
 
   return (
-    <button onClick={startListening}>
-      🎤 Voice
-    </button>
+    <div style={{ width: "100%" }}>
+      <button
+        onClick={startListening}
+        disabled={isListening}
+        style={{
+          width: "100%",
+          height: "60px",
+          border: "none",
+          borderRadius: "12px",
+          background: isListening ? "#1d4ed8" : "#2563eb",
+          color: "white",
+          fontSize: "18px",
+          fontWeight: "600",
+          cursor: isListening ? "not-allowed" : "pointer",
+          transition: "0.3s",
+          opacity: isListening ? 0.8 : 1,
+        }}
+      >
+        {voiceStatus}
+      </button>
+    </div>
   );
 }
 
