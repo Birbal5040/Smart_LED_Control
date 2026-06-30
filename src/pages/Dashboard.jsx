@@ -1,3 +1,5 @@
+import HandTracker from "../components/HandTracker";
+
 import { useState, useEffect } from "react";
 import CameraFeed from "../components/CameraFeed";
 import DeviceCard from "../components/DeviceCard";
@@ -17,6 +19,7 @@ import {
   getDiscoveredDevices,
   getRegistryHeartbeat
 } from "../services/discoveryService";
+
 
 
 
@@ -270,9 +273,7 @@ const handleVoiceCommand = (command) => {
 }}
 >
   {cameraEnabled ? (
-  <CameraFeed
-    facingMode={facingMode}
-  />
+  <HandTracker />
 ) : (
   <div
   style={{
