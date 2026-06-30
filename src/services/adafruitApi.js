@@ -1,38 +1,5 @@
 const AIO_USERNAME = import.meta.env.VITE_AIO_USERNAME;
 const AIO_KEY = import.meta.env.VITE_AIO_KEY;
-
-export async function sendBrightness(device, value) {
-  try {
-    const feedName = device;
-   
-    console.log("Feed Name:", feedName);
-    
-   const url =
-  `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${feedName}/data`;
-
-console.log("URL =", JSON.stringify(url));
-console.log("Feed =", JSON.stringify(feedName));
-
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "X-AIO-Key": AIO_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-       value: `1,${Math.floor(value * 255 / 100)}`
-      }),
-    });
-
-    const data = await response.json();
-
-    console.log("Adafruit Response:", data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 export async function sendToAllDevices(
   value
 ) {
@@ -91,6 +58,44 @@ export async function sendPower(device, power) {
     const data = await response.json();
 
     console.log("Response:", data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+export async function sendBrightness(device, brightness) {
+  try {
+    if (!device) return;
+
+    const feedName = device;
+
+    const url =
+      `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${feedName}/data`;
+
+    const pwm = Math.round((brightness / 100) * 255);
+    console.log("Feed:", feedName);
+    console.log("Brightness:", brightness);
+    console.log("PWM:", pwm);
+    console.log("URL:", url);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "X-AIO-Key": AIO_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        value: brightness === 0
+          ? "0,0"
+          : `1,${pwm}`,
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log("Brightness Response:", data);
+
   } catch (error) {
     console.error(error);
   }

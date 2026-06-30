@@ -272,8 +272,10 @@ const handleVoiceCommand = (command) => {
   boxSizing:"border-box",
 }}
 >
-  {cameraEnabled ? (
-  <HandTracker />
+ {cameraEnabled ? (
+  <HandTracker
+    selectedDevice={selectedDevice}
+  />
 ) : (
   <div
   style={{
