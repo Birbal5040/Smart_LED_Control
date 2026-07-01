@@ -275,7 +275,8 @@ const handleVoiceCommand = (command) => {
  {cameraEnabled ? (
   <HandTracker
     selectedDevice={selectedDevice}
-  />
+    facingMode={facingMode}
+/>
 ) : (
   <div
   style={{

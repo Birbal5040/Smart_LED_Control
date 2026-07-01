@@ -10,7 +10,10 @@ import { sendBrightness } from "../services/adafruitApi";
 //   DrawingUtils,
 // } from "@mediapipe/tasks-vision";
 
-function HandTracker({ selectedDevice }) {
+function HandTracker({
+    selectedDevice,
+    facingMode,
+}) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const handLandmarkerRef = useRef(null);
@@ -32,7 +35,7 @@ const lastSendTime = useRef(0);
       const stream =
         await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: "user",
+            facingMode: facingMode,
           },
         });
 
@@ -126,8 +129,7 @@ sendBrightness(
 // setBrightness(brightness);
 
 }
-
-          requestAnimationFrame(detectHands);
+   animationRef.current = requestAnimationFrame(detectHands);
           }
 
           detectHands();
@@ -142,7 +144,19 @@ sendBrightness(
 
 initialize();
 
-}, []);
+return () => {
+  if (animationRef.current) {
+    cancelAnimationFrame(animationRef.current);
+  }
+
+  if (videoRef.current?.srcObject) {
+    videoRef.current.srcObject
+      .getTracks()
+      .forEach(track => track.stop());
+  }
+};
+
+}, [facingMode]);
 
   return (
     <div
