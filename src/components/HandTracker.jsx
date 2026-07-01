@@ -27,6 +27,9 @@ const lastFingerRef = useRef(-1);
 const lastBrightnessRef = useRef(-1);
 const lastSendTime = useRef(0);
 
+const stableFingerRef = useRef(-1);
+const fingerChangedTimeRef = useRef(Date.now());
+
   useEffect(() => {
   async function startCamera() {
     try {
@@ -97,8 +100,42 @@ if (results.landmarks.length > 0) {
       ctx,
       results.landmarks[0]
     );
-    const fingers = countFingers(results.landmarks[0]);
-    const brightnessValue = fingers * 20;
+
+const fingers = countFingers(results.landmarks[0]);
+
+// Finger changed?
+if (stableFingerRef.current !== fingers) {
+
+    stableFingerRef.current = fingers;
+
+    fingerChangedTimeRef.current = Date.now();
+
+}
+
+// Wait until the finger count is stable
+if (Date.now() - fingerChangedTimeRef.current < 250) {
+
+    animationRef.current =
+        requestAnimationFrame(detectHands);
+
+    return;
+
+}
+
+// const brightnessValue = fingers * 20;
+
+// TODO:
+// Temporary fix for MediaPipe fist detection.
+// Fingers 0 and 1 are treated as OFF.
+// Later replace with a stable gesture recognition algorithm.
+let brightnessValue;
+
+if (fingers <= 1) {
+  brightnessValue = 0;
+} else {
+  brightnessValue = fingers * 20;
+}
+
 
 if (lastFingerRef.current !== fingers) {
     lastFingerRef.current = fingers;
