@@ -8,7 +8,7 @@ import { getDevices } from "../services/deviceStore";
 import VoiceControl from "../components/VoiceControl";
 // import { sendBrightness } from "../services/adafruitApi";
 import GestureControl from "../components/GestureControl";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaInstagram, FaLinkedin } from "react-icons/fa";
 import {
   sendBrightness,
   sendToAllDevices,
@@ -615,14 +615,14 @@ onMouseLeave={(e) => {
 >
   📡 Connected Devices
 </h3>
-
-      {getDevices().map((device, index) => (
+{getDevices().map((device, index) => (
   <DeviceCard
-  key={index}
-  name={device.name}
-  status="Online"
-  onSelect={setSelectedDevice}
-/>
+    key={index}
+    device={device}
+    name={device.name}
+    status="Online"
+    onSelect={setSelectedDevice}
+  />
 ))}
 
 
@@ -639,27 +639,25 @@ onMouseLeave={(e) => {
     lineHeight: "1.8",
   }}
 >
-  Developed with ❤️ by <b>Birbal Kumar</b>
+  Developed with ❤️ by   <br />
+  <b>Robomanthan Pvt. Ltd.</b>
 
   <br />
 
-  B.Tech CSE | AI & Robotics Intern
-
-  <br />
-
-  Robomanthan Pvt. Ltd.
+  Family
+  
 </p>
 
   <div
     style={{
       display: "flex",
       justifyContent: "center",
-      gap: "20px",
+      gap: "10px",
       marginTop: "10px",
     }}
   >
    <a
-  href="https://www.linkedin.com/in/birbalkumar-sf32/"
+  href="https://www.linkedin.com/company/robomanthan/posts/?feedView=all"
   target="_blank"
   rel="noreferrer"
   style={{
@@ -681,7 +679,7 @@ onMouseLeave={(e) => {
 </a>
 
 <a
-  href="https://github.com/Birbal5040"
+  href="https://www.instagram.com/robomanthan/?hl=en"
   target="_blank"
   rel="noreferrer"
   style={{
@@ -699,7 +697,7 @@ onMouseLeave={(e) => {
   e.currentTarget.style.filter = "none";
 }}
 >
-  <FaGithub size={30} />
+  <FaInstagram size={30} />
 </a>
   </div>
 </div>

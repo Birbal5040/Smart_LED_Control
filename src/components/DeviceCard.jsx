@@ -1,4 +1,5 @@
-function DeviceCard({ name, status, onSelect }) {
+function DeviceCard({ device, name, status, onSelect,})
+ {
   return (
     <div
       style={{
@@ -15,9 +16,8 @@ function DeviceCard({ name, status, onSelect }) {
       </p>
 
       <button
-     onClick={() => {
-  alert(name);
-  onSelect(name);
+    onClick={() => {
+  onSelect(device);
 }}
         style={{
           marginTop: "10px",

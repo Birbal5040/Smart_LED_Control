@@ -48,6 +48,12 @@ const deleteDevice = (feed) => {
 
   setDevices(updated);
   saveDevices(updated);
+
+  // If the deleted device is currently selected
+  if (selectedDevice?.feed === feed) {
+    setSelectedDevice(null);
+    localStorage.removeItem("selectedDevice");
+  }
 };
 
 
