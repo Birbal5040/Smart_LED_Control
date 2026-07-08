@@ -143,7 +143,7 @@ const handleVoiceCommand = (command) => {
     minHeight: "100vh",
     background: "#1d0f2a",
     color: "white",
-    padding: "20px",
+    padding: "10px",
     maxWidth: "1200px",
     margin: "0 auto",
     width: "100%",
@@ -153,8 +153,8 @@ const handleVoiceCommand = (command) => {
 <h1
   style={{
     fontSize: "clamp(2rem,5vw,3.5rem)",
-    marginTop: "30px",
-    marginBottom: "10px",
+    marginTop: "8px",
+    marginBottom: "12px",
     textAlign: "center",
     color: "white",
   }}
@@ -166,7 +166,7 @@ const handleVoiceCommand = (command) => {
     color: "#94a3b8",
     textAlign: "center",
     fontSize: "clamp(0.9rem,2vw,1.1rem)",
-    marginBottom: "25px",
+    marginBottom: "5px",
   }}
 >
   Voice • Gesture • Camera • Adafruit IO Control
@@ -257,76 +257,10 @@ const handleVoiceCommand = (command) => {
 </button>
 </div>
 
-
-
-
-
-     {/* Camera Section */}
 <div
   style={{
   background:"#1e293b",
-  padding:"20px",
-  marginTop:"20px",
-  borderRadius:"15px",
-  width:"100%",
-  boxSizing:"border-box",
-}}
->
- {cameraEnabled ? (
-  <HandTracker
-    selectedDevice={selectedDevice}
-    facingMode={facingMode}
-/>
-) : (
-  <div
-  style={{
-    height: "280px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: "#94a3b8",
-  }}
->
-  <h1 style={{ fontSize: "60px" }}>📷</h1>
-
-  <h3>Camera is OFF</h3>
-
-  <p>
-    Click "Start Camera" below
-  </p>
-</div>
-)}
-</div>
-
-<div
-  style={{
-    background: "#1e293b",
-    padding: "20px",
-    marginTop: "20px",
-    borderRadius: "15px",
-    width: "100%",
-    boxSizing: "border-box",
-  }}
->
-  <GestureControl
-    onBrightnessChange={(value) => {
-      setBrightness(value);
-
-      if (controlMode === "all") {
-        sendToAllDevices(value);
-      } else if (selectedDevice) {
-        sendBrightness(selectedDevice.feed, value)
-      }
-    }}
-  />
-</div>
-
-{/* Brightness */}
-<div
-  style={{
-  background:"#1e293b",
-  padding:"20px",
+  padding:"5px",
   marginTop:"20px",
   borderRadius:"15px",
   width:"100%",
@@ -336,75 +270,7 @@ const handleVoiceCommand = (command) => {
   <h3
   style={{
     textAlign: "center",
-    fontSize: "22px",
-    marginBottom: "20px",
-  }}
->
-  💡 Brightness Control
-</h3>
-
-  <input
-  type="range"
-  min="0"
-  max="100"
-  value={brightness}
-  onChange={(e) => {
-  setBrightness(Number(e.target.value));
-}}
-
-onMouseUp={(e) => {
-  const value = Number(e.target.value);
-
-  console.log("Selected Device:", selectedDevice);
-  console.log("Control Mode:", controlMode);
-
-  if (selectedDevice) {
-    if (controlMode === "all") {
-      sendToAllDevices(value);
-    } else {
-      sendBrightness(selectedDevice.feed, value);
-    }
-  }
-    console.log(
-      "Device:",
-      selectedDevice,
-      "Brightness:",
-      value
-    );
-  }}
-  style={{
-  width: "100%",
-  cursor: "pointer",
-}}
-/>
-
-  <p
-  style={{
-    textAlign: "center",
-    marginTop: "15px",
-    fontSize: "22px",
-    fontWeight: "bold",
-    color: "#60a5fa",
-  }}
->
-    💡 Brightness: {brightness}%
-  </p>
-</div>
-
-<div
-  style={{
-  background:"#1e293b",
-  padding:"20px",
-  marginTop:"20px",
-  borderRadius:"15px",
-  width:"100%",
-  boxSizing:"border-box",
-}}
->
-  <h3
-  style={{
-    textAlign: "center",
-    marginBottom: "25px",
+    marginBottom: "15px",
     fontSize: "24px",
   }}
 >
@@ -540,7 +406,7 @@ onMouseLeave={(e) => {
     gridTemplateColumns:
     "repeat(auto-fit,minmax(220px,1fr))",
     gap: "15px",
-    marginTop: "20px",
+    marginTop: "10px",
   }}
 >
   
@@ -557,7 +423,7 @@ onMouseLeave={(e) => {
       background: "#2563eb",
       color: "white",
       border: "none",
-      borderRadius: "12px",
+      borderRadius: "10px",
       cursor: "pointer",
       fontSize: "16px",
     }}
@@ -590,17 +456,163 @@ onMouseLeave={(e) => {
   </button>
 <VoiceControl
   onCommand={handleVoiceCommand}
+
 />
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     {/* Camera Section */}
+<div
+  style={{
+  background:"#1e293b",
+  padding:"5px",
+  marginTop:"10px",
+  borderRadius:"15px",
+  width:"100%",
+  boxSizing:"border-box",
+}}
+>
+ {cameraEnabled ? (
+  <HandTracker
+    selectedDevice={selectedDevice}
+    facingMode={facingMode}
+/>
+) : (
+  <div
+  style={{
+    height: "280px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "#94a3b8",
+  }}
+>
+  <h1 style={{ fontSize: "60px" }}>📷</h1>
+
+  <h3>Camera is OFF</h3>
+
+  <p>
+    Click "Start Camera" just above
+  </p>
+</div>
+)}
+</div>
+
+<div
+  style={{
+    background: "#1e293b",
+    padding: "5px",
+    marginTop: "10px",
+    borderRadius: "15px",
+    width: "100%",
+    boxSizing: "border-box",
+  }}
+>
+  <GestureControl
+    onBrightnessChange={(value) => {
+      setBrightness(value);
+
+      if (controlMode === "all") {
+        sendToAllDevices(value);
+      } else if (selectedDevice) {
+        sendBrightness(selectedDevice.feed, value)
+      }
+    }}
+  />
+</div>
+
+{/* Brightness */}
+<div
+  style={{
+  background:"#1e293b",
+  padding:"5px",
+  marginTop:"10px",
+  borderRadius:"15px",
+  width:"100%",
+  boxSizing:"border-box",
+}}
+>
+  <h3
+  style={{
+    textAlign: "center",
+    fontSize: "22px",
+    marginBottom: "10px",
+  }}
+>
+  💡 Brightness Control
+</h3>
+
+  <input
+  type="range"
+  min="0"
+  max="100"
+  value={brightness}
+  onChange={(e) => {
+  setBrightness(Number(e.target.value));
+}}
+
+onMouseUp={(e) => {
+  const value = Number(e.target.value);
+
+  console.log("Selected Device:", selectedDevice);
+  console.log("Control Mode:", controlMode);
+
+  if (selectedDevice) {
+    if (controlMode === "all") {
+      sendToAllDevices(value);
+    } else {
+      sendBrightness(selectedDevice.feed, value);
+    }
+  }
+    console.log(
+      "Device:",
+      selectedDevice,
+      "Brightness:",
+      value
+    );
+  }}
+  style={{
+  width: "100%",
+  cursor: "pointer",
+}}
+/>
+
+  <p
+  style={{
+    textAlign: "center",
+    marginTop: "15px",
+    fontSize: "22px",
+    fontWeight: "bold",
+    color: "#60a5fa",
+  }}
+>
+    💡 Brightness: {brightness}%
+  </p>
+</div>
+
+
 
 
       {/* Devices */}
       <div
         style={{
   background:"#1e293b",
-  padding:"20px",
-  marginTop:"20px",
+  padding:"5px",
+  marginTop:"10px",
   borderRadius:"15px",
   width:"100%",
   boxSizing:"border-box",

@@ -16,6 +16,8 @@ function VoiceControl({ onCommand }) {
       return;
     }
 
+    
+
     const recognition = new SpeechRecognition();
 
     recognition.lang = "en-US";
@@ -64,6 +66,7 @@ function VoiceControl({ onCommand }) {
 
       setTimeout(() => {
         setVoiceStatus("🎤 Voice Assistant");
+        
       }, 1500);
 
       console.log("Recognition Ended");
@@ -73,28 +76,43 @@ function VoiceControl({ onCommand }) {
   };
 
   return (
-    <div style={{ width: "100%" }}>
-      <button
-        onClick={startListening}
-        disabled={isListening}
-        style={{
-          width: "100%",
-          height: "60px",
-          border: "none",
-          borderRadius: "12px",
-          background: isListening ? "#1d4ed8" : "#2563eb",
-          color: "white",
-          fontSize: "18px",
-          fontWeight: "600",
-          cursor: isListening ? "not-allowed" : "pointer",
-          transition: "0.3s",
-          opacity: isListening ? 0.8 : 1,
-        }}
-      >
-        {voiceStatus}
-      </button>
-    </div>
-  );
+  <div style={{ width: "100%" }}>
+    <button
+      onClick={startListening}
+      disabled={isListening}
+      style={{
+        width: "100%",
+        height: "60px",
+        border: "none",
+        borderRadius: "12px",
+        background: isListening ? "#1d4ed8" : "#2563eb",
+        color: "white",
+        fontSize: "18px",
+        fontWeight: "600",
+        cursor: isListening ? "not-allowed" : "pointer",
+        transition: "0.3s",
+        opacity: isListening ? 0.8 : 1,
+      }}
+    >
+      {voiceStatus}
+    </button>
+
+    {/* Voice Command Help */}
+    <p
+      style={{
+        marginTop: "4px",
+        color: "#94a3b8",
+        fontSize: "10px",
+        textAlign: "center",
+        lineHeight: "1",
+      }}
+    >
+      Say <b>"turn on/off, Brightness 100%/50%"</b>to control your
+      device.
+    </p>
+  </div>
+);
+  
 }
 
 export default VoiceControl;
