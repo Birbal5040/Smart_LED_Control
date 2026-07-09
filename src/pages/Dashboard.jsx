@@ -632,7 +632,7 @@ onMouseUp={(e) => {
     key={index}
     device={device}
     name={device.name}
-    status="Online"
+    status={deviceStatus === "Online"}
     onSelect={setSelectedDevice}
   />
 ))}
