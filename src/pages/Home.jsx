@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+import logo from "../assets/company-logo.png";
 function Home() {
   const navigate = useNavigate();
 
@@ -18,7 +18,7 @@ function Home() {
     >
 
       <img
-  src="src\pages\robo.png"
+  src={logo}
   alt="Company Logo"
   style={{
     width: "180px",
@@ -76,7 +76,7 @@ function Home() {
       <button
         onClick={() => navigate("/dashboard")}
         style={{
-          marginTop: "40px",
+          marginTop: "50px",
           padding: "20px 50px",
           border: "none",
           borderRadius: "15px",
