@@ -16,6 +16,33 @@ function Home() {
         color: "white",
       }}
     >
+
+      <img
+  src="src\pages\robo.png"
+  alt="Company Logo"
+  style={{
+    width: "180px",
+    height: "180px",
+    objectFit: "contain",
+    background: "#ffffff",
+    borderRadius: "120px",
+    padding: "10px",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.35)",
+    marginBottom: "15px",
+  }}
+/>
+
+<p
+  style={{
+    color: "#cbd5e1",
+    fontSize: "1.2rem",
+    marginBottom: "50px",
+  }}
+>
+  Powered by <br />
+  Robomanthan Incubated by IIT Patna
+</p>
+
       <div
         style={{
           fontSize: "100px",
@@ -29,13 +56,14 @@ function Home() {
       <h1
         style={{
           fontSize: "4rem",
-          margin: "10px 0",
+          margin: "50px 0",
+          color: "#facc15",
         }}
       >
         Smart LED
       </h1>
 
-      <p
+      {/* <p
         style={{
           color: "#94a3b8",
           fontSize: "1.5rem",
@@ -43,7 +71,7 @@ function Home() {
         }}
       >
         Fleet Dashboard — Powered by Adafruit IO
-      </p>
+      </p> */}
 
       <button
         onClick={() => navigate("/dashboard")}
